@@ -53,7 +53,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }) {
             />
           ) : (
             <span 
-              onClick={onToggle} 
+              onClick={() => onToggle(task.id)} 
               className="task-title"
               title="Clique para marcar como concluída"
             >
@@ -76,7 +76,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }) {
           {isEditing ? "✓" : <img src={editarIcon} alt="Editar" />}
         </button>
         <button 
-          onClick={onDelete} 
+          onClick={() => onDelete(task.id)} 
           className="delete-btn icon-btn"
           title="Deletar tarefa"
         >

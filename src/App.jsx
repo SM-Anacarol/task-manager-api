@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import TaskForm from "./components/TaskForm";
-import TaskItem from "./components/TaskItem";
+import TaskTable from "./components/TaskTable";
 import "./App.css";
 
 export default function App() {
@@ -138,25 +138,12 @@ export default function App() {
         </div>
       )}
 
-      <div className="task-list">
-        {filteredTasks.length === 0 ? (
-          <p className="empty">
-            {filter === 'all' ? 'Nenhuma tarefa adicionada.' : 
-             filter === 'completed' ? 'Nenhuma tarefa concluída.' : 
-             'Nenhuma tarefa pendente.'}
-          </p>
-        ) : (
-          filteredTasks.map((t) => (
-            <TaskItem
-              key={t.id}
-              task={t}
-              onToggle={() => toggleTask(t.id)}
-              onDelete={() => deleteTask(t.id)}
-              onEdit={editTask}
-            />
-          ))
-        )}
-      </div>
+      <TaskTable
+        tasks={filteredTasks}
+        onToggle={toggleTask}
+        onDelete={deleteTask}
+        onEdit={editTask}
+      />
 
       {confirmState.open && (
         <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
