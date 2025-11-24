@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { editarIcon, lixeiraIcon } from "../assets/icons";
 
 export default function TaskItem({ task, onToggle, onDelete, onEdit }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -51,7 +52,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }) {
             />
           ) : (
             <span 
-              onClick={onToggle} 
+              onClick={() => onToggle(task.id)} 
               className="task-title"
               title="Clique para marcar como concluída"
             >
@@ -68,17 +69,17 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }) {
       <div className="task-actions">
         <button 
           onClick={handleEdit} 
-          className="edit-btn"
+          className="edit-btn icon-btn"
           title={isEditing ? "Salvar" : "Editar"}
         >
-          {isEditing ? "✓" : "✏️"}
+          {isEditing ? "✓" : <img src={editarIcon} alt="Editar" />}
         </button>
         <button 
-          onClick={onDelete} 
-          className="delete-btn"
+          onClick={() => onDelete(task.id)} 
+          className="delete-btn icon-btn"
           title="Deletar tarefa"
         >
-          <span className="trash-icon"></span>
+          <img src={lixeiraIcon} alt="Excluir" />
         </button>
       </div>
     </div>

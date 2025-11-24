@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import TaskForm from "./components/TaskForm";
-import TaskItem from "./components/TaskItem";
+import TaskTable from "./components/TaskTable";
 import "./App.css";
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all'); // 'all', 'completed', 'pending'
+  const [confirmState, setConfirmState] = useState({ open: false, message: '', onConfirm: null });
 
   // 🟢 Carrega tarefas salvas do localStorage
   useEffect(() => {
@@ -44,9 +45,11 @@ export default function App() {
 
   // ❌ Deletar tarefa
   const deleteTask = (id) => {
-    if (window.confirm("Tem certeza que deseja deletar esta tarefa?")) {
-      setTasks(tasks.filter((t) => t.id !== id));
-    }
+    setConfirmState({
+      open: true,
+      message: "Tem certeza que deseja deletar esta tarefa?",
+      onConfirm: () => setTasks(tasks.filter((t) => t.id !== id))
+    });
   };
 
   // ✏️ Editar tarefa
@@ -76,9 +79,12 @@ export default function App() {
 
   // 🗑️ Limpar todas as tarefas concluídas
   const clearCompleted = () => {
-    if (completedTasks > 0 && window.confirm(`Tem certeza que deseja deletar ${completedTasks} tarefa(s) concluída(s)?`)) {
-      setTasks(tasks.filter(t => !t.completed));
-    }
+    if (completedTasks === 0) return;
+    setConfirmState({
+      open: true,
+      message: `Tem certeza que deseja deletar ${completedTasks} tarefa(s) concluída(s)?`,
+      onConfirm: () => setTasks(tasks.filter(t => !t.completed))
+    });
   };
 
   return (
@@ -132,25 +138,43 @@ export default function App() {
         </div>
       )}
 
-      <div className="task-list">
-        {filteredTasks.length === 0 ? (
-          <p className="empty">
-            {filter === 'all' ? 'Nenhuma tarefa adicionada.' : 
-             filter === 'completed' ? 'Nenhuma tarefa concluída.' : 
-             'Nenhuma tarefa pendente.'}
-          </p>
-        ) : (
-          filteredTasks.map((t) => (
-            <TaskItem
-              key={t.id}
-              task={t}
-              onToggle={() => toggleTask(t.id)}
-              onDelete={() => deleteTask(t.id)}
-              onEdit={editTask}
-            />
-          ))
-        )}
-      </div>
+      <TaskTable
+        tasks={filteredTasks}
+        onToggle={toggleTask}
+        onDelete={deleteTask}
+        onEdit={editTask}
+      />
+
+      {confirmState.open && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+          <div className="modal">
+            <div className="modal-header">
+              <h2 id="confirm-title">To-Do List</h2>
+            </div>
+            <div className="modal-body">
+              <p>{confirmState.message}</p>
+            </div>
+            <div className="modal-actions">
+              <button
+                className="confirm-btn"
+                onClick={() => {
+                  const action = confirmState.onConfirm;
+                  setConfirmState({ open: false, message: '', onConfirm: null });
+                  if (typeof action === 'function') action();
+                }}
+              >
+                OK
+              </button>
+              <button
+                className="cancel-btn"
+                onClick={() => setConfirmState({ open: false, message: '', onConfirm: null })}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
