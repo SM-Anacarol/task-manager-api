@@ -1,6 +1,5 @@
 import { useState } from "react";
-import editarIcon from "../../img/editar.png";
-import lixeiraIcon from "../../img/lixeira.png";
+import { editarIcon, lixeiraIcon } from "../assets/icons";
 
 export default function TaskItem({ task, onToggle, onDelete, onEdit }) {
   const [isEditing, setIsEditing] = useState(false);
